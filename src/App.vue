@@ -1,10 +1,5 @@
 <template>
- <p>
-   Hello world
- </p>
-
+  <router-view />
 </template>
 
-<style>
-
-</style>
+<style></style>
