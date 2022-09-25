@@ -4,6 +4,8 @@ import LoginView from "@/components/auth/LoginView"
 
 import QueueList from "@/components/queues/QueueList"
 import AppointmentsList from "@/components/appointments/AppointmentsList"
+import AppointmentListHome from "@/components/appointments/AppointmentListHome"
+import EmployeeList from "@/components/employees/EmployeeList"
 
 import store from "@/store"
 
@@ -24,14 +26,34 @@ const routes = [
     path: "/queues",
     name: "queues",
     component: QueueList,
+    children: [
+      {
+        path: "",
+        name: "queue_appointments_home",
+        component: AppointmentListHome,
+      },
+      {
+        path: ":id",
+        name: "queue_appointments",
+        component: AppointmentsList,
+      },
+    ],
+
     meta: { requiresAuth: true },
   },
   {
-    path: "/queues/:id",
-    name: "queue_appointments",
-    component: AppointmentsList,
+    path: "/employees",
+    name: "employees",
+    component: EmployeeList,
     meta: { requiresAuth: true },
   },
+
+  // {
+  //   path: "/queues/:id",
+  //   name: "queue_appointments",
+  //   component: AppointmentsList,
+  //   meta: { requiresAuth: true },
+  // },
 ]
 
 const router = createRouter({
