@@ -13,7 +13,7 @@
   <div v-else class="container">
     <div class="d-flex flex-row">
       <div v-if="queueList.length > 0" style="width: 30%" class="m-2">
-        <p>Queue list</p>
+        <h5>Список электронных очередей</h5>
         <button
           type="button"
           class="btn btn-primary"

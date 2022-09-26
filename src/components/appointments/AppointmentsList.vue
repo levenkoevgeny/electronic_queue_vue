@@ -1,13 +1,183 @@
 <template>
+  <!--  queueRemake modal-->
+  <div
+    class="modal fade"
+    id="queueRemake"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+    ref="queueRemake"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            Пересоздание очереди
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <h3>
+            Внимание! Пересоздание очереди приведет к удалению уже созданных
+            записей!
+          </h3>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Закрыть
+          </button>
+          <button type="button" class="btn btn-primary">Пересоздать</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  end queueRemake modal-->
+
+  <!--  appointmentUpdate modal-->
+  <div
+    class="modal fade"
+    id="appointmentUpdate"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+    ref="appointmentUpdate"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form @submit="appointmentUpdateHandler">
+          <div class="modal-header">
+            <h5 class="modal-title">Изменение записи</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="container-fluid">
+              <h3>...</h3>
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Фамилия</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="currentAppointment.appointment_lastname"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Имя</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="currentAppointment.appointment_firstname"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="mb-3">
+                    <label class="form-label">Отчество</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="currentAppointment.appointment_patronymic"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">E-mail</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      v-model="currentAppointment.appointment_email"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label class="form-label">Телефон</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="currentAppointment.appointment_phone"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
+                  <div class="form-check">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      v-model="currentAppointment.is_booked"
+                    />
+                    <label class="form-check-label"> Есть запись</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              ref="closeAppointmentUpdateModal"
+            >
+              Закрыть
+            </button>
+            <button type="submit" class="btn btn-primary">Сохранить</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!--  end appointmentUpdate modal-->
+
   <div>
     <div v-if="isLoading">
       <p>Loading...</p>
     </div>
     <div v-else>
       <div v-if="appointmentList.length > 0">
+        <button
+          type="button"
+          class="btn btn-danger"
+          data-bs-toggle="modal"
+          data-bs-target="#queueRemake"
+        >
+          Пересоздать очередь
+        </button>
+        <br />
+        <br />
+
         <div v-for="appointment in sortedAppointmentList" :key="appointment.id">
-          {{ getFormattedDate(appointment.appointment_date_time) }}
-          {{ getFormattedTime(appointment.appointment_date_time) }}
+          <AppointmentItem
+            :appointment-item="appointment"
+            @show-modal="showModalForUpdate"
+          />
         </div>
       </div>
       <div v-else>
@@ -152,15 +322,27 @@
 import { mapGetters } from "vuex"
 import { queueAPI } from "@/api/queueDataAPI"
 import { appointmentAPI } from "@/api/appointmentAPI"
+import AppointmentItem from "@/components/appointments/AppointmentItem"
+import Spinner from "@/components/common/Spinner"
 // import ReconnectingWebSocket from "reconnecting-websocket"
 
 export default {
   name: "AppointmentsList",
+  components: { AppointmentItem, Spinner },
   data() {
     return {
       appointmentList: [],
       queue: null,
+      currentAppointment: {
+        appointment_lastname: "",
+        appointment_firstname: "",
+        appointment_patronymic: "",
+        appointment_email: "",
+        appointment_phone: "",
+        is_booked: false,
+      },
       isLoading: true,
+      isError: true,
     }
   },
   async created() {
@@ -217,11 +399,53 @@ export default {
         this.isLoading = false
       }
     },
-    getFormattedDate(dateTime) {
-      return new Date(dateTime).toLocaleDateString()
+    showModalForUpdate(appointmentId) {
+      this.appointmentList.forEach((item) => {
+        if (item.id === appointmentId) {
+          this.currentAppointment = item
+        }
+      })
+      let updateModal = this.$refs.appointmentUpdate
+
+      let myModal = new bootstrap.Modal(updateModal, {
+        keyboard: false,
+      })
+      myModal.show()
     },
-    getFormattedTime(dateTime) {
-      return new Date(dateTime).toLocaleTimeString()
+    async appointmentUpdateHandler(event) {
+      event.preventDefault()
+      this.isError = false
+      this.isLoading = true
+      try {
+        if (this.currentAppointment.is_booked === false) {
+          this.currentAppointment = {
+            ...this.currentAppointment,
+            appointment_lastname: "",
+            appointment_firstname: "",
+            appointment_patronymic: "",
+            appointment_email: "",
+            appointment_phone: "",
+          }
+        }
+
+        const response = await appointmentAPI.updateAppointmentData(
+          this.userToken,
+          this.currentAppointment
+        )
+        const updatedAppointment = await response.data
+
+        this.appointmentList = this.appointmentList.map((appointment) => {
+          if (appointment.id === updatedAppointment.id) {
+            return updatedAppointment
+          } else return appointment
+        })
+
+        this.$refs.closeAppointmentUpdateModal.click()
+      } catch (e) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+      }
     },
   },
 }

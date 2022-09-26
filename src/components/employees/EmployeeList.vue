@@ -22,6 +22,23 @@
         Добавить сотрудника
       </button>
     </div>
+
+    <div
+      class="d-flex flex-row justify-content-between align-items-end"
+      v-if="employeeList.length > 0"
+    >
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          id="checkAllId"
+          ref="checkAllId"
+          type="checkbox"
+          @change="checkAllHandler($event)"
+        />
+        <label class="form-check-label"> Выделить все </label>
+      </div>
+    </div>
+
     <button
       @click="deleteCheckedWordsHandler"
       class="btn btn-danger"
@@ -95,6 +112,19 @@ export default {
         .finally(() => {
           this.isLoading = false
         })
+    },
+    checkAllHandler(e) {
+      if (e.target.checked) {
+        this.employeeList = this.employeeList.map((employee) => ({
+          ...employee,
+          checked_val: true,
+        }))
+      } else {
+        this.employeeList = this.employeeList.map((employee) => ({
+          ...employee,
+          checked_val: false,
+        }))
+      }
     },
   },
   computed: {
