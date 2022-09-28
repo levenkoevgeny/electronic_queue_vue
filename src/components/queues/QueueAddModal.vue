@@ -49,7 +49,7 @@
 
 <script>
 import { mapGetters } from "vuex"
-import { queueAPI } from "@/api/queueDataAPI"
+import { queueAPI } from "@/api/queueAPI"
 
 export default {
   name: "QueueAddModal",

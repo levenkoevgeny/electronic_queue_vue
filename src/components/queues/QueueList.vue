@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { queueAPI } from "@/api/queueDataAPI"
+import { queueAPI } from "@/api/queueAPI"
 import { mapGetters } from "vuex"
 import Spinner from "@/components/common/Spinner"
 import QueueAddModal from "@/components/queues/QueueAddModal"

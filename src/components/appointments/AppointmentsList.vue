@@ -182,18 +182,28 @@
       </div>
       <div v-else>
         <h1>Очередь не сформирована</h1>
-        <form>
+        <form @submit="createQueue" method="POST">
           <div class="row">
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Дата начала</label>
-                <input type="date" class="form-control" />
+                <input
+                  type="date"
+                  class="form-control"
+                  v-model="queueForm.date_start"
+                  required
+                />
               </div>
             </div>
             <div class="col-md-6">
               <div class="mb-3">
                 <label class="form-label">Дата окончания</label>
-                <input type="date" class="form-control" />
+                <input
+                  type="date"
+                  class="form-control"
+                  v-model="queueForm.date_end"
+                  required
+                />
               </div>
             </div>
           </div>
@@ -208,6 +218,8 @@
                   min="0"
                   max="24"
                   step="1"
+                  v-model="queueForm.day_time_start"
+                  required
                 />
               </div>
             </div>
@@ -220,6 +232,8 @@
                   min="0"
                   max="24"
                   step="1"
+                  v-model="queueForm.day_time_end"
+                  required
                 />
               </div>
             </div>
@@ -231,8 +245,32 @@
                   class="form-control"
                   min="1"
                   max="1440"
-                  step="5"
+                  step="1"
+                  v-model="queueForm.time_interval"
+                  required
                 />
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12">
+              <div class="mb-3">
+                <label class="form-label">Сотрудники</label>
+                <select
+                  class="form-select"
+                  v-model="queueForm.employees"
+                  multiple
+                  required
+                >
+                  <option
+                    v-for="employee in employeeList"
+                    :key="employee.id"
+                    :value="employee.id"
+                  >
+                    {{ employee.last_name }}
+                  </option>
+                </select>
               </div>
             </div>
           </div>
@@ -245,7 +283,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="0"
-                  checked
+                  v-model="queueForm.checkbox_monday"
                 />
                 <label class="form-check-label"> Пн </label>
               </div>
@@ -254,7 +292,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="1"
-                  checked
+                  v-model="queueForm.checkbox_thursday"
                 />
                 <label class="form-check-label"> Вт </label>
               </div>
@@ -263,7 +301,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="2"
-                  checked
+                  v-model="queueForm.checkbox_wednesday"
                 />
                 <label class="form-check-label"> Ср </label>
               </div>
@@ -272,7 +310,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="3"
-                  checked
+                  v-model="queueForm.checkbox_tuesday"
                 />
                 <label class="form-check-label"> Чт </label>
               </div>
@@ -281,7 +319,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="4"
-                  checked
+                  v-model="queueForm.checkbox_friday"
                 />
                 <label class="form-check-label"> Пт </label>
               </div>
@@ -290,7 +328,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="5"
-                  checked
+                  v-model="queueForm.checkbox_saturday"
                 />
                 <label class="form-check-label"> Сб </label>
               </div>
@@ -299,7 +337,7 @@
                   class="form-check-input"
                   type="checkbox"
                   value="6"
-                  checked
+                  v-model="queueForm.checkbox_sunday"
                 />
                 <label class="form-check-label"> Вс </label>
               </div>
@@ -320,8 +358,9 @@
 
 <script>
 import { mapGetters } from "vuex"
-import { queueAPI } from "@/api/queueDataAPI"
+import { queueAPI } from "@/api/queueAPI"
 import { appointmentAPI } from "@/api/appointmentAPI"
+import { employeeAPI } from "@/api/employeeAPI"
 import AppointmentItem from "@/components/appointments/AppointmentItem"
 import Spinner from "@/components/common/Spinner"
 // import ReconnectingWebSocket from "reconnecting-websocket"
@@ -333,6 +372,7 @@ export default {
     return {
       appointmentList: [],
       queue: null,
+      employeeList: [],
       currentAppointment: {
         appointment_lastname: "",
         appointment_firstname: "",
@@ -340,6 +380,21 @@ export default {
         appointment_email: "",
         appointment_phone: "",
         is_booked: false,
+      },
+      queueForm: {
+        date_start: "2022-09-28",
+        date_end: "2022-09-28",
+        day_time_start: 8,
+        day_time_end: 18,
+        time_interval: 15,
+        checkbox_monday: true,
+        checkbox_tuesday: true,
+        checkbox_wednesday: true,
+        checkbox_thursday: true,
+        checkbox_friday: true,
+        checkbox_saturday: true,
+        checkbox_sunday: true,
+        employees: [],
       },
       isLoading: true,
       isError: true,
@@ -393,6 +448,11 @@ export default {
           this.$route.params.id
         )
         this.appointmentList = await responseAppointments.data
+
+        const responseEmployees = await employeeAPI.getEmployeeList(
+          this.userToken
+        )
+        this.employeeList = responseEmployees.data
       } catch (e) {
         this.isError = true
       } finally {
@@ -441,6 +501,22 @@ export default {
         })
 
         this.$refs.closeAppointmentUpdateModal.click()
+      } catch (e) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+      }
+    },
+    async createQueue(event) {
+      this.isLoading = true
+      event.preventDefault()
+      this.isError = false
+      try {
+        const responseQueue = await queueAPI.createQueue(this.userToken, {
+          ...this.queueForm,
+          queue_id: this.queue.id,
+        })
+        this.appointmentList = await responseQueue.data
       } catch (e) {
         this.isError = true
       } finally {

@@ -6,6 +6,7 @@ import QueueList from "@/components/queues/QueueList"
 import AppointmentsList from "@/components/appointments/AppointmentsList"
 import AppointmentListHome from "@/components/appointments/AppointmentListHome"
 import EmployeeList from "@/components/employees/EmployeeList"
+import QueueRegistration from "@/components/queues/QueueRegistration"
 
 import store from "@/store"
 
@@ -45,6 +46,12 @@ const routes = [
     path: "/employees",
     name: "employees",
     component: EmployeeList,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/queue-registration/:uuid",
+    name: "queue-registration",
+    component: QueueRegistration,
     meta: { requiresAuth: true },
   },
 
