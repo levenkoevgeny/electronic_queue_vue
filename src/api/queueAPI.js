@@ -2,9 +2,9 @@ import axios from "axios"
 import { authHeaders } from "@/api/authAPI"
 
 export const queueAPI = {
-  async getQueueList(token) {
+  async getQueueList(token, uuid = "") {
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/queues/`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/queues/?random_uuid=${uuid}`,
       authHeaders(token)
     )
   },

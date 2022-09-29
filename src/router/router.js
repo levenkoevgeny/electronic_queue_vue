@@ -7,6 +7,7 @@ import AppointmentsList from "@/components/appointments/AppointmentsList"
 import AppointmentListHome from "@/components/appointments/AppointmentListHome"
 import EmployeeList from "@/components/employees/EmployeeList"
 import QueueRegistration from "@/components/queues/QueueRegistration"
+import AppointmentSuccess from "@/components/appointments/AppointmentSuccess"
 
 import store from "@/store"
 
@@ -54,13 +55,11 @@ const routes = [
     component: QueueRegistration,
     meta: { requiresAuth: true },
   },
-
-  // {
-  //   path: "/queues/:id",
-  //   name: "queue_appointments",
-  //   component: AppointmentsList,
-  //   meta: { requiresAuth: true },
-  // },
+  {
+    path: "/queue-registration/success/:id",
+    name: "queue-registration-success",
+    component: AppointmentSuccess,
+  },
 ]
 
 const router = createRouter({

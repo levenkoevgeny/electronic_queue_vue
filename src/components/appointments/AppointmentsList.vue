@@ -127,6 +127,19 @@
               </div>
               <div class="row">
                 <div class="col-12">
+                  <div class="mb-3">
+                    <label class="form-label">Комментарий к записи</label>
+                    <textarea
+                      cols="30"
+                      rows="2"
+                      class="form-control"
+                      v-model="currentAppointment.appointment_comment"
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-12">
                   <div class="form-check">
                     <input
                       class="form-check-input"
@@ -379,6 +392,7 @@ export default {
         appointment_patronymic: "",
         appointment_email: "",
         appointment_phone: "",
+        appointment_comment: "",
         is_booked: false,
       },
       queueForm: {
