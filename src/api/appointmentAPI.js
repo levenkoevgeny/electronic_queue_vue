@@ -6,11 +6,11 @@ export const appointmentAPI = {
     token,
     queue = "",
     employee = "",
-    is_booked = "",
-    day_date = ""
+    date = "",
+    is_booked = ""
   ) {
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/appointments/?queue__id=${queue}&employee__id=${employee}&is_booked=${is_booked}&day_date=${day_date}`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/appointments/?queue__id=${queue}&employee__id=${employee}&day_date=${date}&is_booked=${is_booked}`,
       authHeaders(token)
     )
   },

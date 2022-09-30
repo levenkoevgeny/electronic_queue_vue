@@ -46,9 +46,13 @@ export const queueAPI = {
     )
   },
 
-  async getCalendar(token, queueUUID) {
+  async getCalendar(
+    token,
+    year = new Date().getFullYear(),
+    month = new Date().getMonth() + 1
+  ) {
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/calendar/`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/calendar/?year=${year}&month=${month}`,
       authHeaders(token)
     )
   },

@@ -55,7 +55,19 @@
       <div class="modal-content">
         <form @submit="appointmentUpdateHandler">
           <div class="modal-header">
-            <h5 class="modal-title">Изменение записи</h5>
+            <h5 class="modal-title">
+              Изменение записи
+              {{
+                getFormattedDateComponent(
+                  currentAppointment.appointment_date_time
+                )
+              }}
+              {{
+                getFormattedTimeComponent(
+                  currentAppointment.appointment_date_time
+                )
+              }}
+            </h5>
             <button
               type="button"
               class="btn-close"
@@ -65,7 +77,6 @@
           </div>
           <div class="modal-body">
             <div class="container-fluid">
-              <h3>...</h3>
               <div class="row">
                 <div class="col-md-4">
                   <div class="mb-3">
@@ -74,7 +85,7 @@
                       type="text"
                       class="form-control"
                       v-model="currentAppointment.appointment_lastname"
-                      required
+                      @blur="v$.currentAppointment.appointment_lastname.$touch"
                     />
                   </div>
                 </div>
@@ -85,7 +96,6 @@
                       type="text"
                       class="form-control"
                       v-model="currentAppointment.appointment_firstname"
-                      required
                     />
                   </div>
                 </div>
@@ -96,7 +106,6 @@
                       type="text"
                       class="form-control"
                       v-model="currentAppointment.appointment_patronymic"
-                      required
                     />
                   </div>
                 </div>
@@ -109,8 +118,17 @@
                       type="email"
                       class="form-control"
                       v-model="currentAppointment.appointment_email"
-                      required
+                      @blur="v$.currentAppointment.appointment_email.$touch"
                     />
+                    <div
+                      :class="{
+                        invalid: v$.currentAppointment.appointment_email.$error,
+                        'visually-hidden':
+                          !v$.currentAppointment.appointment_email.$error,
+                      }"
+                    >
+                      Не корректный email!
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -120,7 +138,6 @@
                       type="text"
                       class="form-control"
                       v-model="currentAppointment.appointment_phone"
-                      required
                     />
                   </div>
                 </div>
@@ -174,24 +191,75 @@
       <p>Loading...</p>
     </div>
     <div v-else>
-      <div v-if="appointmentList.length > 0">
-        <button
-          type="button"
-          class="btn btn-danger"
-          data-bs-toggle="modal"
-          data-bs-target="#queueRemake"
-        >
-          Пересоздать очередь
-        </button>
+      <div v-if="queue.appointment_count > 0">
         <br />
         <br />
-
-        <div v-for="appointment in sortedAppointmentList" :key="appointment.id">
-          <AppointmentItem
-            :appointment-item="appointment"
-            @show-modal="showModalForUpdate"
-          />
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="mb-3">
+              <label class="form-label">Дата записи</label>
+              <input
+                type="date"
+                class="form-control"
+                v-model="filterFields.date"
+              />
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="mb-3">
+              <label class="form-label">Сотрудник</label>
+              <select class="form-select" v-model="filterFields.employee">
+                <option>Выберите сотрудника</option>
+                <option
+                  v-for="employee in employeeList"
+                  :key="employee.id"
+                  :value="employee.id"
+                >
+                  {{ employee.last_name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="mb-3">
+              <label class="form-label">Запись</label>
+              <select class="form-select" v-model="filterFields.is_booked">
+                <option>-------</option>
+                <option value="True">Да</option>
+                <option value="False">Нет</option>
+              </select>
+            </div>
+          </div>
         </div>
+        <h5>Кол-во записей - {{ sortedAppointmentList.length }}</h5>
+        <!--        <div v-for="appointment in sortedAppointmentList" :key="appointment.id">-->
+
+        <div v-if="sortedAppointmentList.length > 0">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Дата</th>
+                <th scope="col">Время</th>
+                <th scope="col">К кому</th>
+                <th scope="col">Фамилия</th>
+                <th scope="col">Комментарий</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="appointment in sortedAppointmentList"
+                :key="appointment.id"
+              >
+                <AppointmentItem
+                  :appointment-item="appointment"
+                  @show-modal="showModalForUpdate"
+                />
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!--        </div>-->
       </div>
       <div v-else>
         <h1>Очередь не сформирована</h1>
@@ -204,8 +272,17 @@
                   type="date"
                   class="form-control"
                   v-model="queueForm.date_start"
+                  @blur="v$.queueForm.date_start.$touch"
                   required
                 />
+                <div
+                  :class="{
+                    invalid: v$.queueForm.date_start.$error,
+                    'visually-hidden': !v$.queueForm.date_start.$error,
+                  }"
+                >
+                  Это поле не может быть пустым!
+                </div>
               </div>
             </div>
             <div class="col-md-6">
@@ -215,8 +292,17 @@
                   type="date"
                   class="form-control"
                   v-model="queueForm.date_end"
+                  @blur="v$.queueForm.date_end.$touch"
                   required
                 />
+                <div
+                  :class="{
+                    invalid: v$.queueForm.date_end.$error,
+                    'visually-hidden': !v$.queueForm.date_end.$error,
+                  }"
+                >
+                  Это поле не может быть пустым!
+                </div>
               </div>
             </div>
           </div>
@@ -232,8 +318,17 @@
                   max="24"
                   step="1"
                   v-model="queueForm.day_time_start"
+                  @blur="v$.queueForm.day_time_start.$touch"
                   required
                 />
+                <div
+                  :class="{
+                    invalid: v$.queueForm.day_time_start.$error,
+                    'visually-hidden': !v$.queueForm.day_time_start.$error,
+                  }"
+                >
+                  Это поле не может быть пустым!
+                </div>
               </div>
             </div>
             <div class="col-md-4">
@@ -246,8 +341,17 @@
                   max="24"
                   step="1"
                   v-model="queueForm.day_time_end"
+                  @blur="v$.queueForm.day_time_end.$touch"
                   required
                 />
+                <div
+                  :class="{
+                    invalid: v$.queueForm.day_time_end.$error,
+                    'visually-hidden': !v$.queueForm.day_time_end.$error,
+                  }"
+                >
+                  Это поле не может быть пустым!
+                </div>
               </div>
             </div>
             <div class="col-md-4">
@@ -260,8 +364,17 @@
                   max="1440"
                   step="1"
                   v-model="queueForm.time_interval"
+                  @blur="v$.queueForm.time_interval.$touch"
                   required
                 />
+                <div
+                  :class="{
+                    invalid: v$.queueForm.time_interval.$error,
+                    'visually-hidden': !v$.queueForm.time_interval.$error,
+                  }"
+                >
+                  Это поле не может быть пустым!
+                </div>
               </div>
             </div>
           </div>
@@ -273,6 +386,7 @@
                 <select
                   class="form-select"
                   v-model="queueForm.employees"
+                  @blur="v$.queueForm.employees.$touch"
                   multiple
                   required
                 >
@@ -284,6 +398,14 @@
                     {{ employee.last_name }}
                   </option>
                 </select>
+                <div
+                  :class="{
+                    invalid: v$.queueForm.employees.$error,
+                    'visually-hidden': !v$.queueForm.employees.$error,
+                  }"
+                >
+                  Это поле не может быть пустым!
+                </div>
               </div>
             </div>
           </div>
@@ -360,7 +482,15 @@
           <div class="row">
             <div class="col-md-4"></div>
           </div>
-          <button type="submit" class="btn btn-primary">
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            v-if="!v$.queueForm.$invalid"
+          >
+            Сформировать очередь
+          </button>
+          <button type="submit" class="btn btn-primary" disabled v-else>
             Сформировать очередь
           </button>
         </form>
@@ -376,11 +506,34 @@ import { appointmentAPI } from "@/api/appointmentAPI"
 import { employeeAPI } from "@/api/employeeAPI"
 import AppointmentItem from "@/components/appointments/AppointmentItem"
 import Spinner from "@/components/common/Spinner"
+import useVuelidate from "@vuelidate/core"
+import { required, requiredIf, email } from "@vuelidate/validators"
+import { getFormattedDate } from "@/utils"
+import { getFormattedTime } from "@/utils"
 // import ReconnectingWebSocket from "reconnecting-websocket"
 
 export default {
   name: "AppointmentsList",
   components: { AppointmentItem, Spinner },
+  setup() {
+    return { v$: useVuelidate() }
+  },
+  validations() {
+    return {
+      queueForm: {
+        date_start: { required },
+        date_end: { required },
+        day_time_start: { required },
+        day_time_end: { required },
+        time_interval: { required },
+        employees: { required },
+      },
+      currentAppointment: {
+        appointment_email: { email },
+        // appointment_lastname: requiredIf(true),
+      },
+    }
+  },
   data() {
     return {
       appointmentList: [],
@@ -409,6 +562,11 @@ export default {
         checkbox_saturday: true,
         checkbox_sunday: true,
         employees: [],
+      },
+      filterFields: {
+        date: "",
+        employee: "",
+        is_booked: "",
       },
       isLoading: true,
       isError: true,
@@ -473,12 +631,27 @@ export default {
         this.isLoading = false
       }
     },
-    showModalForUpdate(appointmentId) {
-      this.appointmentList.forEach((item) => {
-        if (item.id === appointmentId) {
-          this.currentAppointment = item
-        }
-      })
+    async showModalForUpdate(appointmentId) {
+      this.isError = false
+      try {
+        const response = await appointmentAPI.getAppointmentData(
+          this.userToken,
+          appointmentId
+        )
+        this.currentAppointment = await response.data
+      } catch (e) {
+        this.isError = true
+      } finally {
+      }
+
+      // this.appointmentList.forEach((item) => {
+      //   if (item.id === appointmentId) {
+      //     this.currentAppointment = item
+      //   }
+      // })
+
+      this.v$.currentAppointment.appointment_email.$dirty = false
+
       let updateModal = this.$refs.appointmentUpdate
 
       let myModal = new bootstrap.Modal(updateModal, {
@@ -490,6 +663,7 @@ export default {
       event.preventDefault()
       this.isError = false
       this.isLoading = true
+
       try {
         if (this.currentAppointment.is_booked === false) {
           this.currentAppointment = {
@@ -499,6 +673,7 @@ export default {
             appointment_patronymic: "",
             appointment_email: "",
             appointment_phone: "",
+            appointment_comment: "",
           }
         }
 
@@ -508,13 +683,13 @@ export default {
         )
         const updatedAppointment = await response.data
 
+        this.$refs.closeAppointmentUpdateModal.click()
+
         this.appointmentList = this.appointmentList.map((appointment) => {
           if (appointment.id === updatedAppointment.id) {
             return updatedAppointment
           } else return appointment
         })
-
-        this.$refs.closeAppointmentUpdateModal.click()
       } catch (e) {
         this.isError = true
       } finally {
@@ -525,20 +700,63 @@ export default {
       this.isLoading = true
       event.preventDefault()
       this.isError = false
+
+      if (!this.v$.queueForm.$invalid) {
+        try {
+          const responseQueue = await queueAPI.createQueue(this.userToken, {
+            ...this.queueForm,
+            queue_id: this.queue.id,
+          })
+          this.appointmentList = await responseQueue.data
+        } catch (e) {
+          this.isError = true
+        } finally {
+          this.isLoading = false
+        }
+      }
+    },
+    async makeFilter() {
+      this.isLoading = true
+      this.isError = false
       try {
-        const responseQueue = await queueAPI.createQueue(this.userToken, {
-          ...this.queueForm,
-          queue_id: this.queue.id,
-        })
-        this.appointmentList = await responseQueue.data
+        const responseAppointments = await appointmentAPI.getAppointmentList(
+          this.userToken,
+          this.queue.id,
+          this.filterFields.employee,
+          this.filterFields.date,
+          this.filterFields.is_booked
+        )
+        this.appointmentList = await responseAppointments.data
       } catch (e) {
         this.isError = true
       } finally {
         this.isLoading = false
       }
     },
+    getFormattedDateComponent(dateTime) {
+      return getFormattedDate(dateTime)
+    },
+    getFormattedTimeComponent(dateTime) {
+      return getFormattedTime(dateTime)
+    },
+  },
+  watch: {
+    filterFields: {
+      handler(newValue, oldValue) {
+        this.makeFilter()
+      },
+      deep: true,
+    },
   },
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.invalid {
+  color: #dc3545;
+}
+td,
+tr {
+  text-align: center;
+}
+</style>

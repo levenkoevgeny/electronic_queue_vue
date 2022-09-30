@@ -18,6 +18,12 @@
           </select>
         </div>
         <br />
+        <div>
+          <button @click="monthDecrement">Prev</button>
+          <button @click="setCurrentDate">Current</button>
+          <button @click="monthIncrement">Next</button>
+        </div>
+
         <button
           type="button"
           class="btn btn-light m-2"
@@ -123,6 +129,10 @@ export default {
   data() {
     return {
       calendar: null,
+      currentDate: {
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+      },
       queue: null,
       isLoading: true,
       isError: false,
@@ -184,17 +194,50 @@ export default {
     setAppointment(appointmentId) {
       this.appointmentForm.id = appointmentId
     },
+    monthIncrement() {
+      this.currentDate.month++
+      if (this.currentDate.month > 12) {
+        this.currentDate.year++
+        this.currentDate.month = 1
+      }
+      this.updateCalendar()
+    },
+    monthDecrement() {
+      this.currentDate.month--
+      if (this.currentDate.month < 1) {
+        this.currentDate.year--
+        this.currentDate.month = 12
+      }
+      this.updateCalendar()
+    },
+    setCurrentDate() {
+      this.currentDate.year = new Date().getFullYear()
+      this.currentDate.month = new Date().getMonth() + 1
+      this.updateCalendar()
+    },
+    async updateCalendar() {
+      this.isLoading = true
+      this.isError = false
+      try {
+        const responseCalendar = await queueAPI.getCalendar(
+          this.userToken,
+          this.currentDate.year,
+          this.currentDate.month
+        )
+        const restData = await responseCalendar.data["calendar"]
+        this.calendar = JSON.parse(restData)
+      } catch (e) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+      }
+    },
   },
   async created() {
     try {
       const responseCalendar = await queueAPI.getCalendar(this.userToken)
       const restData = await responseCalendar.data["calendar"]
-
-      let calendarArray = []
-      restData.forEach((item) => {
-        calendarArray.push(JSON.parse(item))
-      })
-      this.calendar = calendarArray
+      this.calendar = JSON.parse(restData)
 
       const responseQueue = await queueAPI.getQueueList(
         this.userToken,

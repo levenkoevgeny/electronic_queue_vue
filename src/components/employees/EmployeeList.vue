@@ -8,7 +8,12 @@
     Что-то пошло не так!
   </div>
   <div v-if="isLoading">
-    <Spinner />
+    <div
+      class="container d-flex justify-content-center align-items-center"
+      style="height: 100vh"
+    >
+      <Spinner />
+    </div>
   </div>
 
   <div v-else class="container">
@@ -22,9 +27,10 @@
         Добавить сотрудника
       </button>
     </div>
-
+    <h5 v-if="isSaving">...saving</h5>
+    <h5 v-else>All saved in DB</h5>
     <div
-      class="d-flex flex-row justify-content-between align-items-end"
+      class="d-flex flex-row justify-content-between align-items-end mb-3"
       v-if="employeeList.length > 0"
     >
       <div class="form-check">
@@ -47,7 +53,11 @@
       Удалить выбранные ({{ checkedForDeleteCount }})
     </button>
     <div v-for="employee in sortedEmployeeList" :key="employee.id">
-      <EmployeeItem :employee-item="employee" />
+      <EmployeeItem
+        :employee-item="employee"
+        @set-is-error="(value) => (this.isError = value)"
+        @set-is-saving="(value) => (this.isSaving = value)"
+      />
     </div>
   </div>
 </template>
@@ -66,6 +76,7 @@ export default {
     return {
       employeeList: [],
       isLoading: true,
+      isSaving: false,
       isError: false,
     }
   },
@@ -86,6 +97,7 @@ export default {
   methods: {
     deleteCheckedWordsHandler() {
       this.isLoading = true
+      this.isError = false
       let requestIds = []
       let responseIds = []
 
@@ -109,6 +121,7 @@ export default {
             (employee) => !responseIds.includes(employee.id)
           )
         })
+        .catch(() => (this.isError = true))
         .finally(() => {
           this.isLoading = false
         })
