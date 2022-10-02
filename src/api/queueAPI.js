@@ -2,9 +2,9 @@ import axios from "axios"
 import { authHeaders } from "@/api/authAPI"
 
 export const queueAPI = {
-  async getQueueList(token, uuid = "") {
+  async getQueueList(token) {
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/queues/?random_uuid=${uuid}`,
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/queues/`,
       authHeaders(token)
     )
   },
@@ -42,17 +42,6 @@ export const queueAPI = {
   async deleteQueue(token, queueId) {
     return axios.delete(
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/queues/${queueId}/`,
-      authHeaders(token)
-    )
-  },
-
-  async getCalendar(
-    token,
-    year = new Date().getFullYear(),
-    month = new Date().getMonth() + 1
-  ) {
-    return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/calendar/?year=${year}&month=${month}`,
       authHeaders(token)
     )
   },

@@ -11,16 +11,13 @@
       {{ getFormattedTimeComponent(appointmentItem.appointment_date_time) }}
     </button>
   </td>
-  <td>{{ appointmentItem.employee.last_name }}</td>
+  <td>
+    {{ appointmentItem.employee.last_name }}
+    {{ appointmentItem.employee.first_name[0] }}.
+    {{ appointmentItem.employee.patronymic[0] }}.
+  </td>
   <td>{{ appointmentItem.appointment_lastname }}</td>
   <td>{{ appointmentItem.appointment_comment }}</td>
-
-  <!--  {{ getFormattedDateComponent(appointmentItem.appointment_date_time) }}-->
-
-  <!--  {{ getFormattedTimeComponent(appointmentItem.appointment_date_time) }}-->
-
-  <!--  {{ appointmentItem.employee.last_name }}-->
-  <!--  {{ appointmentItem.appointment_lastname }}-->
 </template>
 
 <script>

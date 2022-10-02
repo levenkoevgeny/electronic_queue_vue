@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router"
 import NotFoundView from "@/components/common/NotFoundView"
 import LoginView from "@/components/auth/LoginView"
-
+import RegistrationView from "@/components/auth/RegistrationView"
 import QueueList from "@/components/queues/QueueList"
 import AppointmentsList from "@/components/appointments/AppointmentsList"
 import AppointmentListHome from "@/components/appointments/AppointmentListHome"
@@ -15,7 +15,12 @@ const routes = [
   {
     path: "/",
     name: "main",
-    redirect: "/queues",
+    redirect: "/admin/queues",
+  },
+  {
+    path: "/admin",
+    name: "admin",
+    redirect: "/admin/queues",
   },
   {
     path: "/login",
@@ -23,9 +28,15 @@ const routes = [
     component: LoginView,
     meta: { requiresAuth: false },
   },
+  {
+    path: "/registration",
+    name: "registration",
+    component: RegistrationView,
+    meta: { requiresAuth: false },
+  },
   { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundView },
   {
-    path: "/queues",
+    path: "/admin/queues",
     name: "queues",
     component: QueueList,
     children: [
@@ -44,7 +55,7 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
-    path: "/employees",
+    path: "/admin/employees",
     name: "employees",
     component: EmployeeList,
     meta: { requiresAuth: true },
@@ -53,12 +64,13 @@ const routes = [
     path: "/queue-registration/:uuid",
     name: "queue-registration",
     component: QueueRegistration,
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: false },
   },
   {
     path: "/queue-registration/success/:id",
     name: "queue-registration-success",
     component: AppointmentSuccess,
+    meta: { requiresAuth: false },
   },
 ]
 

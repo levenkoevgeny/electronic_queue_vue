@@ -1,126 +1,134 @@
 <template>
   <div class="container">
+    <div v-if="isError" class="alert alert-danger m-0 p-3" role="alert">
+      Что-то пошло не так!
+    </div>
     <div v-if="isLoading">
       <Spinner />
     </div>
     <div v-else>
-      <h1>{{ queue.queue_name }}</h1>
-      <div>
-        <div class="mb-3">
-          <select class="form-select" v-model="selectedEmployee">
-            <option
-              v-for="employee in employeeList"
-              :key="employee.id"
-              :value="employee.id"
-            >
-              {{ employee.last_name }}
-            </option>
-          </select>
-        </div>
-        <br />
+      <div v-if="queue.is_active">
+        <h1>{{ queue.queue_name }}</h1>
         <div>
-          <button @click="monthDecrement">Prev</button>
-          <button @click="setCurrentDate">Current</button>
-          <button @click="monthIncrement">Next</button>
-        </div>
+          <div class="my-3">{{ getCurrentMonthName }} {{ getCurrentYear }}</div>
+          <div>
+            <button @click="monthDecrement">Prev</button>
+            <button @click="setCurrentDate">Current</button>
+            <button @click="monthIncrement">Next</button>
+          </div>
 
-        <button
-          type="button"
-          class="btn btn-light m-2"
-          v-for="calendarItem in calendar"
-          :key="calendarItem.id"
-          @click="getFreeAppointment(calendarItem.day_date)"
-        >
-          {{ calendarItem.day_date }} {{ calendarItem.day_name }}
-        </button>
-        <br />
-        <br />
-        <br />
-        <div v-if="freeAppointmentList.length">
           <button
             type="button"
             class="btn btn-light m-2"
-            v-for="freeAppointment in freeAppointmentList"
-            :key="freeAppointment.id"
-            @click="setAppointment(freeAppointment.id)"
+            v-for="calendarItem in calendar"
+            :key="calendarItem.id"
+            @click="getFreeAppointment(calendarItem.day_date)"
           >
-            {{
-              new Date(
-                freeAppointment.appointment_date_time
-              ).toLocaleTimeString()
-            }}
+            {{ calendarItem.day_date }} {{ calendarItem.day_name }}
           </button>
           <br />
           <br />
-          <form @submit="appointmentFormSubmitHandler">
-            <div class="mb-3">
-              <label class="form-label">Фамилия</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="appointmentForm.appointment_lastname"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Имя</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="appointmentForm.appointment_firstname"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Отчество</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="appointmentForm.appointment_patronymic"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">E-mail</label>
-              <input
-                type="email"
-                class="form-control"
-                v-model="appointmentForm.appointment_email"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Телефон</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="appointmentForm.appointment_phone"
-                required
-              />
-            </div>
-            <div class="mb-3">
-              <label class="form-label">Комментарий к записи</label>
 
-              <textarea
-                cols="30"
-                rows="3"
-                class="form-control"
-                v-model="appointmentForm.appointment_comment"
-              ></textarea>
+          <div>
+            <div class="mb-3">
+              <select class="form-select" v-model="selectedEmployee">
+                <option selected value="">Выберите сотрудника</option>
+                <option
+                  v-for="employee in employeeList"
+                  :key="employee.id"
+                  :value="employee.id"
+                >
+                  {{ employee.last_name }}
+                </option>
+              </select>
             </div>
-            <button type="submit" class="btn btn-primary">Записаться</button>
-          </form>
+          </div>
+
+          <br />
+          <div v-if="freeAppointmentList.length">
+            <button
+              type="button"
+              class="btn btn-light m-2"
+              v-for="freeAppointment in freeAppointmentList"
+              :key="freeAppointment.id"
+              @click="setAppointment(freeAppointment.id)"
+            >
+              {{
+                new Date(
+                  freeAppointment.appointment_date_time
+                ).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
+              }}
+            </button>
+            <br />
+            <br />
+            <form @submit="appointmentFormSubmitHandler">
+              <div class="mb-3">
+                <label class="form-label">Фамилия</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="appointmentForm.appointment_lastname"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Имя</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="appointmentForm.appointment_firstname"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Отчество</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="appointmentForm.appointment_patronymic"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">E-mail</label>
+                <input
+                  type="email"
+                  class="form-control"
+                  v-model="appointmentForm.appointment_email"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Телефон</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="appointmentForm.appointment_phone"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Комментарий к записи</label>
+
+                <textarea
+                  cols="30"
+                  rows="3"
+                  class="form-control"
+                  v-model="appointmentForm.appointment_comment"
+                ></textarea>
+              </div>
+              <button type="submit" class="btn btn-primary">Записаться</button>
+            </form>
+          </div>
         </div>
       </div>
+      <div v-else><h3>Очередь не активна</h3></div>
     </div>
   </div>
 </template>
 
 <script>
-import { queueAPI } from "@/api/queueAPI"
-import { appointmentAPI } from "@/api/appointmentAPI"
-import { employeeAPI } from "@/api/employeeAPI"
-import { mapGetters } from "vuex"
+import { clientAPI } from "@/api/clientAPI"
 import Spinner from "@/components/common/Spinner"
 
 export default {
@@ -142,11 +150,11 @@ export default {
       selectedTime: null,
       appointmentForm: {
         id: "",
-        appointment_lastname: "jhg",
-        appointment_firstname: "jg",
-        appointment_patronymic: "jg",
-        appointment_email: "hhh@sdf.by",
-        appointment_phone: "khkjh",
+        appointment_lastname: "Фамилия",
+        appointment_firstname: "Имя",
+        appointment_patronymic: "Отчество",
+        appointment_email: "test@amia.by",
+        appointment_phone: "+375-29-111-11-11",
         appointment_comment: "",
       },
     }
@@ -156,12 +164,11 @@ export default {
       this.isLoading = true
       this.isError = false
       try {
-        const response = await appointmentAPI.getAppointmentList(
-          this.userToken,
+        const response = await clientAPI.getAppointmentList(
           this.queue.id,
           this.selectedEmployee,
-          false,
-          appointmentDate
+          appointmentDate,
+          false
         )
         this.freeAppointmentList = await response.data
       } catch (e) {
@@ -218,9 +225,9 @@ export default {
     async updateCalendar() {
       this.isLoading = true
       this.isError = false
+      this.freeAppointmentList = []
       try {
-        const responseCalendar = await queueAPI.getCalendar(
-          this.userToken,
+        const responseCalendar = await clientAPI.getCalendar(
           this.currentDate.year,
           this.currentDate.month
         )
@@ -235,21 +242,16 @@ export default {
   },
   async created() {
     try {
-      const responseCalendar = await queueAPI.getCalendar(this.userToken)
+      const responseCalendar = await clientAPI.getCalendar()
       const restData = await responseCalendar.data["calendar"]
       this.calendar = JSON.parse(restData)
 
-      const responseQueue = await queueAPI.getQueueList(
-        this.userToken,
+      const responseQueue = await clientAPI.getQueueData(
         this.$route.params.uuid
       )
-      if (responseQueue.data.length) {
-        this.queue = responseQueue.data[0]
-      }
+      this.queue = responseQueue.data
 
-      const responseEmployees = await employeeAPI.getEmployeeList(
-        this.userToken
-      )
+      const responseEmployees = await clientAPI.getEmployeeList()
       this.employeeList = await responseEmployees.data
     } catch (e) {
       this.isError = true
@@ -259,10 +261,26 @@ export default {
   },
 
   computed: {
-    ...mapGetters({
-      userData: "auth/getUser",
-      userToken: "auth/getToken",
-    }),
+    getCurrentMonthName() {
+      const monthNames = [
+        "Январь",
+        "Февраль",
+        "Март",
+        "Апрель",
+        "Май",
+        "Июнь",
+        "Июль",
+        "Август",
+        "Сентябрь",
+        "Октябрь",
+        "Ноябрь",
+        "Декабрь",
+      ]
+      return monthNames[this.currentDate.month - 1]
+    },
+    getCurrentYear() {
+      return this.currentDate.year
+    },
   },
 }
 </script>

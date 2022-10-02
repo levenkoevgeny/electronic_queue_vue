@@ -85,7 +85,6 @@
                       type="text"
                       class="form-control"
                       v-model="currentAppointment.appointment_lastname"
-                      @blur="v$.currentAppointment.appointment_lastname.$touch"
                     />
                   </div>
                 </div>
@@ -187,13 +186,30 @@
   <!--  end appointmentUpdate modal-->
 
   <div>
+    <div v-if="isError" class="alert alert-danger m-0 p-3" role="alert">
+      Что-то пошло не так!
+    </div>
     <div v-if="isLoading">
       <p>Loading...</p>
     </div>
     <div v-else>
+      <div>
+        <QueueUpdateForm
+          :queue-item="queue"
+          @set-is-error="(value) => (this.isError = value)"
+        />
+        <button class="btn btn-danger" @click="deleteQueueHandler(queue.id)">
+          Удалить очередь
+        </button>
+      </div>
+      <br />
       <div v-if="queue.appointment_count > 0">
         <br />
+        <h5>Ссылка на данную очередь - {{ getQueueLink() }}</h5>
         <br />
+
+        <h5>Фильтр для поиска</h5>
+
         <div class="row">
           <div class="col-lg-4">
             <div class="mb-3">
@@ -209,13 +225,14 @@
             <div class="mb-3">
               <label class="form-label">Сотрудник</label>
               <select class="form-select" v-model="filterFields.employee">
-                <option>Выберите сотрудника</option>
+                <option selected value="">Все сотрудники</option>
                 <option
                   v-for="employee in employeeList"
                   :key="employee.id"
                   :value="employee.id"
                 >
                   {{ employee.last_name }}
+                  {{ employee.first_name[0] }}. {{ employee.patronymic[0] }}.
                 </option>
               </select>
             </div>
@@ -224,7 +241,7 @@
             <div class="mb-3">
               <label class="form-label">Запись</label>
               <select class="form-select" v-model="filterFields.is_booked">
-                <option>-------</option>
+                <option selected value="">Все записи</option>
                 <option value="True">Да</option>
                 <option value="False">Нет</option>
               </select>
@@ -395,7 +412,8 @@
                     :key="employee.id"
                     :value="employee.id"
                   >
-                    {{ employee.last_name }}
+                    {{ employee.last_name }} {{ employee.first_name[0] }}.
+                    {{ employee.patronymic[0] }}.
                   </option>
                 </select>
                 <div
@@ -505,6 +523,7 @@ import { queueAPI } from "@/api/queueAPI"
 import { appointmentAPI } from "@/api/appointmentAPI"
 import { employeeAPI } from "@/api/employeeAPI"
 import AppointmentItem from "@/components/appointments/AppointmentItem"
+import QueueUpdateForm from "@/components/queues/QueueUpdateForm"
 import Spinner from "@/components/common/Spinner"
 import useVuelidate from "@vuelidate/core"
 import { required, requiredIf, email } from "@vuelidate/validators"
@@ -514,7 +533,7 @@ import { getFormattedTime } from "@/utils"
 
 export default {
   name: "AppointmentsList",
-  components: { AppointmentItem, Spinner },
+  components: { AppointmentItem, QueueUpdateForm, Spinner },
   setup() {
     return { v$: useVuelidate() }
   },
@@ -569,7 +588,7 @@ export default {
         is_booked: "",
       },
       isLoading: true,
-      isError: true,
+      isError: false,
     }
   },
   async created() {
@@ -608,11 +627,13 @@ export default {
   },
   methods: {
     async initData() {
+      this.isError = false
       try {
         const responseQueue = await queueAPI.getQueueData(
           this.userToken,
           this.$route.params.id
         )
+
         this.queue = await responseQueue.data
 
         const responseAppointments = await appointmentAPI.getAppointmentList(
@@ -643,12 +664,6 @@ export default {
         this.isError = true
       } finally {
       }
-
-      // this.appointmentList.forEach((item) => {
-      //   if (item.id === appointmentId) {
-      //     this.currentAppointment = item
-      //   }
-      // })
 
       this.v$.currentAppointment.appointment_email.$dirty = false
 
@@ -707,7 +722,8 @@ export default {
             ...this.queueForm,
             queue_id: this.queue.id,
           })
-          this.appointmentList = await responseQueue.data
+          // this.appointmentList = await responseQueue.data
+          await this.initData()
         } catch (e) {
           this.isError = true
         } finally {
@@ -733,11 +749,26 @@ export default {
         this.isLoading = false
       }
     },
+    async deleteQueueHandler(queueId) {
+      this.isLoading = true
+      try {
+        await queueAPI.deleteQueue(this.userToken, queueId)
+        await this.$router.push({ name: "queues" })
+        this.$router.go()
+      } catch (e) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+      }
+    },
     getFormattedDateComponent(dateTime) {
       return getFormattedDate(dateTime)
     },
     getFormattedTimeComponent(dateTime) {
       return getFormattedTime(dateTime)
+    },
+    getQueueLink() {
+      return `${process.env.VUE_APP_CLIENT_PROTOCOL}://${process.env.VUE_APP_CLIENT_HOST}:${process.env.VUE_APP_CLIENT_PORT}/queue-registration/${this.queue.id}`
     },
   },
   watch: {
