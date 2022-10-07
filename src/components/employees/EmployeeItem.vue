@@ -96,11 +96,20 @@ export default {
     }, 500),
   },
   watch: {
-    employeeItem: {
+    "employeeItem.last_name": {
       handler(newValue, oldValue) {
         this.updateWordData()
       },
-      deep: true,
+    },
+    "employeeItem.first_name": {
+      handler(newValue, oldValue) {
+        this.updateWordData()
+      },
+    },
+    "employeeItem.patronymic": {
+      handler(newValue, oldValue) {
+        this.updateWordData()
+      },
     },
   },
 }

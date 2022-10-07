@@ -15,9 +15,9 @@ export const clientAPI = {
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/queue-client/${queueId}`
     )
   },
-  async getEmployeeList() {
+  async getEmployeeList(organization = "") {
     return axios.get(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/employee-client/`
+      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/employee-client/?organization__id=${organization}`
     )
   },
   async getAppointmentList(

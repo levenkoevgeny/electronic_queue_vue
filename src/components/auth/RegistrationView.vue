@@ -1,69 +1,51 @@
 <template>
-  <div class="container">
-    <br />
-    <br />
-    <h5>Регистрация</h5>
 
-    <div class="alert alert-danger" v-if="v$.$errors.length > 0">
-      <!--      <h5 v-if="v$.auth_data.username.$error">Логин:</h5>-->
-      <p v-for="error of v$.auth_data.username.$errors" :key="error.$uid">
-        {{ error.$message }}
-      </p>
-      <!--      <h5 v-if="v$.auth_data.password.$error">Пароль:</h5>-->
-      <p v-for="error of v$.auth_data.password.$errors" :key="error.$uid">
-        {{ error.$message }}
-      </p>
-      <!--      <h5 v-if="v$.auth_data.confirmPassword.$error">Пароль (повтор):</h5>-->
-      <p
-        v-for="error of v$.auth_data.confirmPassword.$errors"
-        :key="error.$uid"
-      >
-        {{ error.$message }}
-      </p>
+
+  <div class="containers">
+    <div class="wrpper">
+      <div class="Authorization">
+        <img src="@/assets/amia_logo_med.png" alt="@/assets/amia_logo_med.png" class="img_logo">
+        <div class="error" v-if="v$.$errors.length > 0">
+          <!--      <h5 v-if="v$.auth_data.username.$error">Логин:</h5>-->
+          <p v-for="error of v$.auth_data.username.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </p>
+          <!--      <h5 v-if="v$.auth_data.password.$error">Пароль:</h5>-->
+          <p v-for="error of v$.auth_data.password.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </p>
+          <!--      <h5 v-if="v$.auth_data.confirmPassword.$error">Пароль (повтор):</h5>-->
+          <p v-for="error of v$.auth_data.confirmPassword.$errors" :key="error.$uid">
+            {{ error.$message }}
+          </p>
+        </div>
+        <form @submit.prevent="submitHandler">
+
+          <div class="after_input" id="person">
+            <input type="text" class="form-control" placeholder="name@example.com" v-model="auth_data.username"
+              @blur="v$.auth_data.username.$touch" />
+          </div>
+          <div class="after_input" id="lock">
+            <input type="password" class="form-control" placeholder="Password" v-model="auth_data.password"
+              @blur="v$.auth_data.password.$touch" />
+          </div>
+          <div class="after_input" id="lock_repeat">
+            <input type="password" class="form-control" placeholder="Repeat Password"
+              v-model="auth_data.confirmPassword" @blur="v$.auth_data.confirmPassword.$touch" />
+          </div>
+          <div class="after_input">
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+            <label class="form-check-label" for="exampleCheck1">Принимаю условия пользовательского соглашения</label>
+          </div>
+          <div class="after_input">
+            <button type="submit" class="registerbtn" v-if="v$.$invalid" disabled>
+              Регистрация
+            </button>
+            <button type="submit" class="registerbtn" v-else>Регистрация</button>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <form @submit.prevent="submitHandler">
-      <div class="mb-3">
-        <label class="form-label">Логин</label>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="name@example.com"
-          v-model="auth_data.username"
-          @blur="v$.auth_data.username.$touch"
-        />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Пароль</label>
-        <input
-          type="password"
-          class="form-control"
-          placeholder="Password"
-          v-model="auth_data.password"
-          @blur="v$.auth_data.password.$touch"
-        />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Повторите пароль</label>
-        <input
-          type="password"
-          class="form-control"
-          placeholder="Password"
-          v-model="auth_data.confirmPassword"
-          @blur="v$.auth_data.confirmPassword.$touch"
-        />
-      </div>
-      <div class="mb-3 form-check">
-        <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-        <label class="form-check-label" for="exampleCheck1"
-          >Принимаю условия пользовательского соглашения</label
-        >
-      </div>
-      <button type="submit" class="btn btn-primary" v-if="v$.$invalid" disabled>
-        Регистрация
-      </button>
-      <button type="submit" class="btn btn-primary" v-else>Регистрация</button>
-    </form>
   </div>
 </template>
 
@@ -152,4 +134,195 @@ export default {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+
+.error {
+  background-color: #ef3c23;
+  color: #000;
+  font-size: 14px;
+  padding-right: 5px;
+  padding-top: 3px;
+  display: block;
+  width: 80%;
+  padding: 10px 15px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+
+.containers {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(60deg, #16213e, #61a4bc, #fe7e6d, #e94560);
+  background-size: 500%;
+  animation: gradientAnimation 35s ease infinite;
+}
+
+.wrpper {
+  background: rgb(255, 255, 255, 0.192);
+  backdrop-filter: blur(10px);
+  height: 100vh;
+  width: 900px;
+
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: relative;
+}
+
+.form-check-input {
+  margin: 3px 10px;
+}
+
+.Authorization {
+  border-radius: 20px;
+  background-color: #fff;
+  box-shadow: 0 0 10px #333;
+  z-index: 1;
+  position: relative;
+  width: 450px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+}
+
+.after_input {
+  width: 100%;
+  padding: 10px;
+  margin: 0px auto 0px auto;
+  display: flex;
+  justify-content: center;
+}
+
+
+input[type=text],
+input[type=password] {
+  width: 65%;
+  padding: 5px 10px;
+  display: block;
+  border: 0px;
+  border-radius: 0;
+  border-bottom: 1px solid #8ebba7;
+  border-left: 1px solid #8ebba7;
+}
+
+input[type=text]:hover,
+input[type=password]:hover {
+  padding: 5px 7px;
+}
+
+
+#authorization {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10px 30px 20px 30px;
+  font-size: 30px;
+  font-weight: normal;
+}
+
+#log_email::before {
+  content: url(https://img.icons8.com/sf-ultralight-filled/25/000000/new-post.png);
+}
+
+#lock::before {
+  content: url(https://img.icons8.com/material-rounded/24/000000/lock--v1.png);
+}
+
+#lock_repeat::before {
+  content: url(https://img.icons8.com/material-rounded/24/000000/lock--v1.png);
+}
+
+#person::before {
+  content: url(https://img.icons8.com/material/24/000000/person-male.png);
+}
+
+.after_input::before {
+  color: #89b4a1;
+  padding: 3px;
+  font-size: 20px;
+  border-bottom: 1px solid #8ebba7;
+}
+
+.registerbtn {
+  width: 70%;
+  margin: 20px auto 5px auto;
+  font-size: 20px;
+  padding: 10px 0 10px 0;
+  border-radius: 15px;
+  border: 0px;
+  background-color: #8ebba7;
+
+}
+
+.to_sing_up {
+  margin: 0 auto 0 auto;
+  font-size: 15px;
+}
+
+.sing_up {
+  margin: 10px auto 0 auto;
+  text-decoration: none;
+  color: #8ebba7;
+  font-weight: bold;
+  padding: 5px;
+}
+
+
+.img_logo {
+
+  margin: 10px auto 0px auto;
+}
+
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0 50%;
+  }
+
+  30% {
+    background-position: 50% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+
+  70% {
+    background-position: 50% 50%;
+  }
+
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+@media screen and (max-width:450px) {
+
+  .Authorization {
+    width: 100%;
+    height: 100%;
+    border-radius: 0;
+  }
+
+  /* .img_logo {
+
+    height: 150px;
+  } */
+  .form-check-label {
+    font-size: .8em;
+
+  }
+
+}
+</style>
