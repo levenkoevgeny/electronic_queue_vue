@@ -1,10 +1,12 @@
 <template>
-
-
   <div class="containers">
     <div class="wrpper">
       <div class="Authorization">
-        <img src="@/assets/amia_logo_med.png" alt="@/assets/amia_logo_med.png" class="img_logo">
+        <img
+          src="@/assets/amia_logo_med.png"
+          alt="@/assets/amia_logo_med.png"
+          class="img_logo"
+        />
         <div class="error" v-if="v$.$errors.length > 0">
           <!--      <h5 v-if="v$.auth_data.username.$error">Логин:</h5>-->
           <p v-for="error of v$.auth_data.username.$errors" :key="error.$uid">
@@ -15,33 +17,63 @@
             {{ error.$message }}
           </p>
           <!--      <h5 v-if="v$.auth_data.confirmPassword.$error">Пароль (повтор):</h5>-->
-          <p v-for="error of v$.auth_data.confirmPassword.$errors" :key="error.$uid">
+          <p
+            v-for="error of v$.auth_data.confirmPassword.$errors"
+            :key="error.$uid"
+          >
             {{ error.$message }}
           </p>
         </div>
         <form @submit.prevent="submitHandler">
-
           <div class="after_input" id="person">
-            <input type="text" class="form-control" placeholder="name@example.com" v-model="auth_data.username"
-              @blur="v$.auth_data.username.$touch" />
+            <input
+              type="text"
+              class="form-control"
+              placeholder="name@example.com"
+              v-model="auth_data.username"
+              @blur="v$.auth_data.username.$touch"
+            />
           </div>
           <div class="after_input" id="lock">
-            <input type="password" class="form-control" placeholder="Password" v-model="auth_data.password"
-              @blur="v$.auth_data.password.$touch" />
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Password"
+              v-model="auth_data.password"
+              @blur="v$.auth_data.password.$touch"
+            />
           </div>
           <div class="after_input" id="lock_repeat">
-            <input type="password" class="form-control" placeholder="Repeat Password"
-              v-model="auth_data.confirmPassword" @blur="v$.auth_data.confirmPassword.$touch" />
+            <input
+              type="password"
+              class="form-control"
+              placeholder="Repeat Password"
+              v-model="auth_data.confirmPassword"
+              @blur="v$.auth_data.confirmPassword.$touch"
+            />
           </div>
           <div class="after_input">
-            <input type="checkbox" class="form-check-input" id="exampleCheck1" />
-            <label class="form-check-label" for="exampleCheck1">Принимаю условия пользовательского соглашения</label>
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="exampleCheck1"
+            />
+            <label class="form-check-label" for="exampleCheck1"
+              >Принимаю условия пользовательского соглашения</label
+            >
           </div>
           <div class="after_input">
-            <button type="submit" class="registerbtn" v-if="v$.$invalid" disabled>
+            <button
+              type="submit"
+              class="registerbtn"
+              v-if="v$.$invalid"
+              disabled
+            >
               Регистрация
             </button>
-            <button type="submit" class="registerbtn" v-else>Регистрация</button>
+            <button type="submit" class="registerbtn" v-else>
+              Регистрация
+            </button>
           </div>
         </form>
       </div>
@@ -141,7 +173,6 @@ export default {
   box-sizing: border-box;
 }
 
-
 .error {
   background-color: #ef3c23;
   color: #000;
@@ -154,7 +185,6 @@ export default {
   margin: 0 auto;
   text-align: center;
 }
-
 
 .containers {
   display: flex;
@@ -193,7 +223,6 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-
 }
 
 .after_input {
@@ -204,9 +233,8 @@ export default {
   justify-content: center;
 }
 
-
-input[type=text],
-input[type=password] {
+input[type="text"],
+input[type="password"] {
   width: 65%;
   padding: 5px 10px;
   display: block;
@@ -216,11 +244,10 @@ input[type=password] {
   border-left: 1px solid #8ebba7;
 }
 
-input[type=text]:hover,
-input[type=password]:hover {
+input[type="text"]:hover,
+input[type="password"]:hover {
   padding: 5px 7px;
 }
-
 
 #authorization {
   display: flex;
@@ -262,7 +289,6 @@ input[type=password]:hover {
   border-radius: 15px;
   border: 0px;
   background-color: #8ebba7;
-
 }
 
 .to_sing_up {
@@ -278,9 +304,7 @@ input[type=password]:hover {
   padding: 5px;
 }
 
-
 .img_logo {
-
   margin: 10px auto 0px auto;
 }
 
@@ -306,9 +330,7 @@ input[type=password]:hover {
   }
 }
 
-
-@media screen and (max-width:450px) {
-
+@media screen and (max-width: 450px) {
   .Authorization {
     width: 100%;
     height: 100%;
@@ -320,9 +342,7 @@ input[type=password]:hover {
     height: 150px;
   } */
   .form-check-label {
-    font-size: .8em;
-
+    font-size: 0.8em;
   }
-
 }
 </style>

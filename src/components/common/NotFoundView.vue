@@ -2,11 +2,9 @@
   <div class="containers">
     <div class="wrpper colum_wr">
       <h1 class="error_text_404">404</h1>
-      <img src="@/assets/no_conect.png" alt="" class="img_error">
+      <img src="@/assets/no_conect.png" alt="" class="img_error" />
       <h2 class="error_h2">Opps</h2>
-      <h3 class="error_h3">Something went wrong.</h3>
-      <h3 class="error_h3"> prease try again.</h3>
-
+      <h3 class="error_h3">Page not found</h3>
     </div>
   </div>
 </template>
@@ -19,7 +17,6 @@ export default {
 
 <style scoped>
 .colum_wr {
-
   flex-direction: column;
 }
 
@@ -49,8 +46,6 @@ export default {
   background: linear-gradient(60deg, #16213e, #61a4bc, #fe7e6d, #e94560);
   background-size: 500%;
   animation: gradientAnimation 35s ease infinite;
-
-
 }
 
 @keyframes gradientAnimation {

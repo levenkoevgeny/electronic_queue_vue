@@ -11,9 +11,7 @@
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">
-            Пересоздание очереди
-          </h5>
+          <h5 class="modal-title">Пересоздание очереди</h5>
           <button
             type="button"
             class="btn-close"
@@ -185,6 +183,88 @@
   </div>
   <!--  end appointmentUpdate modal-->
 
+  <!--  addEmployeeModal modal-->
+
+  <div
+    class="modal fade"
+    id="addEmployeeModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <form @submit.prevent="addNewEmployee">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Новый сотрудник</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Фамилия</label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="newEmployeeForm.last_name"
+                @blur="v$.newEmployeeForm.last_name.$touch"
+                required
+              />
+              <div
+                :class="{
+                  invalid: v$.newEmployeeForm.last_name.$error,
+                  'visually-hidden': !v$.newEmployeeForm.last_name.$error,
+                }"
+              >
+                Это поле не может быть пустым!
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Имя</label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="newEmployeeForm.first_name"
+              />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Отчество</label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="newEmployeeForm.patronymic"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+              ref="modalEmployeeClose"
+            >
+              Закрыть
+            </button>
+            <button
+              v-if="v$.newEmployeeForm.$invalid"
+              type="button"
+              class="btn btn-primary"
+              disabled
+            >
+              Добавить
+            </button>
+            <button v-else type="submit" class="btn btn-primary">
+              Добавить
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
   <div>
     <div v-if="isError" class="alert alert-danger m-0 p-3" role="alert">
       Что-то пошло не так!
@@ -416,6 +496,14 @@
                     {{ employee.patronymic[0] }}.
                   </option>
                 </select>
+                <button
+                  type="button"
+                  class="btn btn-link"
+                  data-bs-toggle="modal"
+                  data-bs-target="#addEmployeeModal"
+                >
+                  Добавить сотрудника
+                </button>
                 <div
                   :class="{
                     invalid: v$.queueForm.employees.$error,
@@ -549,7 +637,9 @@ export default {
       },
       currentAppointment: {
         appointment_email: { email },
-        // appointment_lastname: requiredIf(true),
+      },
+      newEmployeeForm: {
+        last_name: { required },
       },
     }
   },
@@ -568,8 +658,8 @@ export default {
         is_booked: false,
       },
       queueForm: {
-        date_start: "2022-09-28",
-        date_end: "2022-09-28",
+        date_start: new Date().toISOString().split("T")[0],
+        date_end: new Date().toISOString().split("T")[0],
         day_time_start: 8,
         day_time_end: 18,
         time_interval: 15,
@@ -586,6 +676,11 @@ export default {
         date: "",
         employee: "",
         is_booked: "",
+      },
+      newEmployeeForm: {
+        last_name: "",
+        first_name: "",
+        patronymic: "",
       },
       isLoading: true,
       isError: false,
@@ -759,6 +854,22 @@ export default {
         this.isError = true
       } finally {
         this.isLoading = false
+      }
+    },
+    async addNewEmployee(event) {
+      event.preventDefault()
+      try {
+        const response = await employeeAPI.addNewEmployee(this.userToken, {
+          organization: this.userData.id,
+          ...this.newEmployeeForm,
+        })
+        const newEmployee = await response.data
+        this.employeeList.push(newEmployee)
+      } catch (error) {
+        this.isError = true
+      } finally {
+        this.isLoading = false
+        this.$refs.modalEmployeeClose.click()
       }
     },
     getFormattedDateComponent(dateTime) {

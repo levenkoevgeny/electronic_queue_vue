@@ -14,6 +14,7 @@ export const appointmentAPI = {
       authHeaders(token)
     )
   },
+
   async getAppointmentData(token, appointmentId) {
     return axios.get(
       `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/appointments/${appointmentId}`,
@@ -37,13 +38,13 @@ export const appointmentAPI = {
     )
   },
 
-  async partialUpdateAppointmentData(token, appointmentData) {
-    return axios.patch(
-      `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/appointments/${appointmentData.id}/`,
-      appointmentData,
-      authHeaders(token)
-    )
-  },
+  // async partialUpdateAppointmentData(token, appointmentData) {
+  //   return axios.patch(
+  //     `${process.env.VUE_APP_BACKEND_PROTOCOL}://${process.env.VUE_APP_BACKEND_HOST}:${process.env.VUE_APP_BACKEND_PORT}/api/appointments/${appointmentData.id}/`,
+  //     appointmentData,
+  //     authHeaders(token)
+  //   )
+  // },
 
   async deleteAppointment(token, appointmentId) {
     return axios.delete(
