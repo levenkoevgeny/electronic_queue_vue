@@ -17,11 +17,14 @@ export default {
 
 <style scoped>
 .colum_wr {
+  display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
 .error_text_404 {
   font-size: 100px;
+  margin: 0 auto;
   color: #e94560;
 }
 
@@ -54,15 +57,15 @@ export default {
   }
 
   30% {
-    background-position: 50% 50%;
+    background-position: 30% 50%;
   }
 
   50% {
-    background-position: 100% 50%;
+    background-position: 70% 50%;
   }
 
   70% {
-    background-position: 50% 50%;
+    background-position: 30% 50%;
   }
 
   100% {

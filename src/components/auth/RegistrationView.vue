@@ -2,12 +2,8 @@
   <div class="containers">
     <div class="wrpper">
       <div class="Authorization">
-        <img
-          src="@/assets/amia_logo_med.png"
-          alt="@/assets/amia_logo_med.png"
-          class="img_logo"
-        />
-        <div class="error" v-if="v$.$errors.length > 0">
+        <img src="@/assets/amia_logo_med.png" alt="@/assets/amia_logo_med.png" class="img_logo" />
+        <div class="alert-dangers" v-if="v$.$errors.length > 0">
           <!--      <h5 v-if="v$.auth_data.username.$error">Логин:</h5>-->
           <p v-for="error of v$.auth_data.username.$errors" :key="error.$uid">
             {{ error.$message }}
@@ -17,58 +13,29 @@
             {{ error.$message }}
           </p>
           <!--      <h5 v-if="v$.auth_data.confirmPassword.$error">Пароль (повтор):</h5>-->
-          <p
-            v-for="error of v$.auth_data.confirmPassword.$errors"
-            :key="error.$uid"
-          >
+          <p v-for="error of v$.auth_data.confirmPassword.$errors" :key="error.$uid">
             {{ error.$message }}
           </p>
         </div>
         <form @submit.prevent="submitHandler">
           <div class="after_input" id="person">
-            <input
-              type="text"
-              class="form-control"
-              placeholder="name@example.com"
-              v-model="auth_data.username"
-              @blur="v$.auth_data.username.$touch"
-            />
+            <input type="text" class="form-control" placeholder="name@example.com" v-model="auth_data.username"
+              @blur="v$.auth_data.username.$touch" />
           </div>
           <div class="after_input" id="lock">
-            <input
-              type="password"
-              class="form-control"
-              placeholder="Password"
-              v-model="auth_data.password"
-              @blur="v$.auth_data.password.$touch"
-            />
+            <input type="password" class="form-control" placeholder="Password" v-model="auth_data.password"
+              @blur="v$.auth_data.password.$touch" />
           </div>
           <div class="after_input" id="lock_repeat">
-            <input
-              type="password"
-              class="form-control"
-              placeholder="Repeat Password"
-              v-model="auth_data.confirmPassword"
-              @blur="v$.auth_data.confirmPassword.$touch"
-            />
+            <input type="password" class="form-control" placeholder="Repeat Password"
+              v-model="auth_data.confirmPassword" @blur="v$.auth_data.confirmPassword.$touch" />
           </div>
           <div class="after_input">
-            <input
-              type="checkbox"
-              class="form-check-input"
-              id="exampleCheck1"
-            />
-            <label class="form-check-label" for="exampleCheck1"
-              >Принимаю условия пользовательского соглашения</label
-            >
+            <input type="checkbox" class="form-check-input" id="exampleCheck1" />
+            <label class="form-check-label" for="exampleCheck1">Принимаю условия пользовательского соглашения</label>
           </div>
           <div class="after_input">
-            <button
-              type="submit"
-              class="registerbtn"
-              v-if="v$.$invalid"
-              disabled
-            >
+            <button type="submit" class="registerbtn" v-if="v$.$invalid" disabled>
               Регистрация
             </button>
             <button type="submit" class="registerbtn" v-else>
@@ -173,16 +140,14 @@ export default {
   box-sizing: border-box;
 }
 
-.error {
-  background-color: #ef3c23;
-  color: #000;
-  font-size: 14px;
-  padding-right: 5px;
-  padding-top: 3px;
-  display: block;
-  width: 80%;
-  padding: 10px 15px;
-  margin: 0 auto;
+.alert-dangers {
+  border-color: #B63E5A;
+  background: #E26868;
+  color: #fff;
+  margin: 0 40px;
+  border-radius: 10px;
+  font-weight: 300;
+  font-size: 20px;
   text-align: center;
 }
 
@@ -308,27 +273,29 @@ input[type="password"]:hover {
   margin: 10px auto 0px auto;
 }
 
+
 @keyframes gradientAnimation {
   0% {
     background-position: 0 50%;
   }
 
   30% {
-    background-position: 50% 50%;
+    background-position: 30% 50%;
   }
 
   50% {
-    background-position: 100% 50%;
+    background-position: 70% 50%;
   }
 
   70% {
-    background-position: 50% 50%;
+    background-position: 30% 50%;
   }
 
   100% {
     background-position: 0% 50%;
   }
 }
+
 
 @media screen and (max-width: 450px) {
   .Authorization {

@@ -5,9 +5,10 @@
       <div class="Authorization">
         <img src="@/assets/amia_logo_med.png" alt="@/assets/amia_logo_med.png" class="img_logo">
         <form @submit=" submitHandler" id="authorization">
-          <div v-if="isLogInError" class="error" role="alert">
-            Ошибка авторизации!
+          <div class="alert-dangers " v-if="isLogInError" role="alert">
+            <strong> Ошибка авторизации!</strong>
           </div>
+
           <div id="log">
             <div class="after_input" id="person">
               <input type="text" class="form-control" placeholder="name@example.com" v-model="auth_data.username"
@@ -64,6 +65,18 @@ export default {
   margin: 0;
   box-sizing: border-box;
 }
+
+.alert-dangers {
+  border-color: #B63E5A;
+  background: #E26868;
+  color: #fff;
+  margin: 0 40px;
+  border-radius: 10px;
+  font-weight: 300;
+  font-size: 20px;
+  text-align: center;
+}
+
 
 
 .error {
@@ -186,6 +199,12 @@ input[type=password]:hover {
 
 }
 
+.alert-warning-alt {
+  border-color: #F3F3EB;
+  background: #E9CEAC;
+  color: #fff;
+}
+
 .to_sing_up {
   margin: 0 auto 0 auto;
   font-size: 15px;
@@ -205,27 +224,29 @@ input[type=password]:hover {
   margin: 10px auto 0px auto;
 }
 
+
 @keyframes gradientAnimation {
   0% {
     background-position: 0 50%;
   }
 
   30% {
-    background-position: 50% 50%;
+    background-position: 30% 50%;
   }
 
   50% {
-    background-position: 100% 50%;
+    background-position: 70% 50%;
   }
 
   70% {
-    background-position: 50% 50%;
+    background-position: 30% 50%;
   }
 
   100% {
     background-position: 0% 50%;
   }
 }
+
 
 
 @media screen and (max-width:450px) {
