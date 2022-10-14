@@ -1,15 +1,13 @@
 <template>
-  <button type="button"
-          class="btn_time"
-          :class="{ isActiveTime: freeAppointment.isActive}"
-          @click="$emit('setAppointment', freeAppointment)">
+  <button type="button" class="btn_time" :class="{ isActiveTime: freeAppointment.isActive}"
+    @click="$emit('setAppointment', freeAppointment)">
     {{
-      new Date(
-        freeAppointment.appointment_date_time
-      ).toLocaleTimeString([], {
-        hour: "2-digit",
-        minute: "2-digit"
-      })
+    new Date(
+    freeAppointment.appointment_date_time
+    ).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+    })
     }}
   </button>
 </template>
@@ -31,6 +29,8 @@ export default {
 }
 
 .isActiveTime {
-  background-color: #B63E5A
+  transform: scale(1.05);
+
+  box-shadow: 0px 0px 10px 0px black;
 }
 </style>

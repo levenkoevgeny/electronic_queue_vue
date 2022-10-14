@@ -420,10 +420,7 @@ export default {
   /* не подсвечиваются выходные и дни других месяцев */
 }
 
-.nil {
-  color: rgb(51, 51, 51, 0.3);
-  opacity: 0.4;
-}
+
 
 #days {
   display: flex;
@@ -798,7 +795,7 @@ body {
 
   .buttons {
     border: 0;
-    color: #2b2b2b;
+
     width: 43px;
     height: 43px;
     line-height: 30px;
